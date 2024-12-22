@@ -6,7 +6,8 @@ import { blogService } from './blog.service';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createBlog = catchAsync(async (req, res, next) => {
-  const result = await blogService.createBlogIntoDb(req.body);
+  const id = req.user.id;
+  const result = await blogService.createBlogIntoDb(id, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -31,7 +32,8 @@ const getAllBlogs = catchAsync(async (req, res, next) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const updateBlogs = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const result = await blogService.updateBlogIntoDb(id, req.body);
+  const authorId = req.user.id;
+  const result = await blogService.updateBlogIntoDb(id, authorId, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -44,7 +46,8 @@ const updateBlogs = catchAsync(async (req, res, next) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const deleteBlogs = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const result = await blogService.deleteBlogIntoDb(id);
+  const authorId = req.user.id;
+  const result = await blogService.deleteBlogIntoDb(id, authorId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

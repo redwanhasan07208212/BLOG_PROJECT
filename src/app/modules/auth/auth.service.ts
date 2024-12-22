@@ -2,10 +2,10 @@ import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
+import { Tuser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import { createToken } from './auth.utils';
-import { Tuser } from '../user/user.interface';
 const loginUser = async (payLoad: TLoginUser) => {
   const user = await User.isUserExistByCustomId(payLoad?.email);
 
@@ -24,17 +24,20 @@ const loginUser = async (payLoad: TLoginUser) => {
   }
 
   const jwtPayload = {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    id: user._id,
     userEmail: user.email,
     role: user.role,
   };
-  const accessToken = createToken(
+  const token = createToken(
     jwtPayload,
     config.JWT_ACCESS_SECRET as string,
     config.JWT_ACCESS_EXPIRES_IN as string,
   );
 
   return {
-    accessToken,
+    token,
   };
 };
 const registerUserIntoDb = async (payload: Tuser) => {
@@ -49,5 +52,5 @@ const registerUserIntoDb = async (payload: Tuser) => {
 
 export const authService = {
   loginUser,
-  registerUserIntoDb
+  registerUserIntoDb,
 };
